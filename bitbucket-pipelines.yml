@@ -1,0 +1,19 @@
+image: node:16
+pipelines:
+  default:
+    - step:
+        name: Build, run tests, analyze on SonarQube
+        caches:
+          - node
+        script:
+          - pipe: sonarsource/sonarqube-scan:1.1.0
+            variables:
+              SONAR_HOST_URL: $SONAR_HOST_URL
+              SONAR_TOKEN: $SONAR_TOKEN
+  
+    - step:
+        name: Testing secrets if hardcoded
+        script:
+          - pipe: atlassian/git-secrets-scan:1.2.1
+            variables:
+              FILES_IGNORED: 'package-lock.json'
